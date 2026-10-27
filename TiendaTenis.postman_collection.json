@@ -1,0 +1,1769 @@
+{
+  "info": {
+    "name": "Tienda de Tenis API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Proyecto Final Tópicos Avanzados de Desarrollo Web. Primero ejecuta 'Login admin': guarda el token automáticamente."
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "Token {{token}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tenis_id",
+      "value": "1"
+    },
+    {
+      "key": "nuevo_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jonathan\",\n  \"email\": \"jonathan@correo.com\",\n  \"password\": \"MiClave2026\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Login cliente (guarda token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api-token-auth/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api-token-auth"
+              ]
+            },
+            "description": "Para probar como usuario normal: crear o editar responde 403 y el inventario no es visible.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"cliente\",\n  \"password\": \"Cliente12345\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.token) { pm.collectionVariables.set('token', d.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Editar mi perfil",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo@correo.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Renovar token (guarda el nuevo)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reset-token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reset-token"
+              ]
+            },
+            "description": "Borra el token actual y entrega uno nuevo."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.token) { pm.collectionVariables.set('token', d.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout (borra el token)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Login admin (guarda token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api-token-auth/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api-token-auth"
+              ]
+            },
+            "description": "Ejecútalo antes de lo demás: guarda el token de admin en la variable {{token}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin12345\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.token) { pm.collectionVariables.set('token', d.token); }"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Catálogo (CRUD)",
+      "item": [
+        {
+          "name": "Listar tenis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Ver un tenis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Crear tenis con inventario anidado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "description": "Solo admin. Crea el tenis y sus tallas en una sola petición.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"NK-DUNK-LOW\",\n  \"nombre\": \"Dunk Low Retro\",\n  \"descripcion\": \"Clásico de basketball de los 80.\",\n  \"marca_id\": 1,\n  \"categoria_ids\": [\n    2,\n    3\n  ],\n  \"color\": \"Blanco/Negro\",\n  \"genero\": \"U\",\n  \"precio\": \"2599.00\",\n  \"precio_oferta\": \"2299.00\",\n  \"inventario\": [\n    {\n      \"talla\": \"25\",\n      \"cantidad\": 4\n    },\n    {\n      \"talla\": \"26\",\n      \"cantidad\": 6\n    },\n    {\n      \"talla\": \"27\",\n      \"cantidad\": 3\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.id) { pm.collectionVariables.set('nuevo_id', d.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Editar precio del nuevo (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{nuevo_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{nuevo_id}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": \"2699.00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Borrar el tenis nuevo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{nuevo_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{nuevo_id}}"
+              ]
+            },
+            "description": "Si ya tiene ventas responde 400: hay que descontinuarlo."
+          }
+        },
+        {
+          "name": "Listar marcas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/marcas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Marca con sus tenis (anidado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/marcas/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas",
+                "1"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Crear marca",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/marcas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Reebok\",\n  \"pais_origen\": \"Reino Unido\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar categorías",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categorias/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categorias/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Outdoor\",\n  \"descripcion\": \"Senderismo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Búsqueda y filtros",
+      "item": [
+        {
+          "name": "Buscar 'air'",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?search=air",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "air"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Por marca",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?marca=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "marca",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Por categoría",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?categoria=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Rango de precio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?precio_min=1500&precio_max=3000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "precio_min",
+                  "value": "1500"
+                },
+                {
+                  "key": "precio_max",
+                  "value": "3000"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Con existencias en talla 26.5",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?talla=26.5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "talla",
+                  "value": "26.5"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Solo disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?disponible=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "disponible",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "En oferta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?en_oferta=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "en_oferta",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Por color",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?color=Negro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "color",
+                  "value": "Negro"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Descontinuados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?estado=DESCONTINUADO",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "DESCONTINUADO"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ordenar por nombre",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?ordering=nombre",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "ordering",
+                  "value": "nombre"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mujer, ordenado por precio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?genero=M&ordering=precio",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "genero",
+                  "value": "M"
+                },
+                {
+                  "key": "ordering",
+                  "value": "precio"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Más stock primero",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?ordering=-stock",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "ordering",
+                  "value": "-stock"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Combinado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/?categoria=1&disponible=true&ordering=-precio",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "1"
+                },
+                {
+                  "key": "disponible",
+                  "value": "true"
+                },
+                {
+                  "key": "ordering",
+                  "value": "-precio"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Acciones personalizadas",
+      "item": [
+        {
+          "name": "Agregar a favoritos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/favorito/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "favorito"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Quitar de favoritos",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/favorito/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "favorito"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Mis favoritos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/favoritos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "favoritos"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Descontinuar (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/estado/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "estado"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"DESCONTINUADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reactivar (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/estado/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "estado"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ACTIVO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Tallas disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/disponibilidad/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "disponibilidad"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Más vendidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/mas-vendidos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "mas-vendidos"
+              ]
+            },
+            "description": "Ranking por pares vendidos (suma de movimientos SALIDA). Acepta los mismos filtros que /tenis/, por ejemplo ?marca=1.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Inventario (admin)",
+      "item": [
+        {
+          "name": "Listar inventario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Inventario de un tenis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/?tenis={{tenis_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ],
+              "query": [
+                {
+                  "key": "tenis",
+                  "value": "{{tenis_id}}"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Tallas agotadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/?sin_stock=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ],
+              "query": [
+                {
+                  "key": "sin_stock",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Bajo stock",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/bajo-stock/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "bajo-stock"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Resumen general",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/resumen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "resumen"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Agregar talla",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenis\": 1,\n  \"talla\": \"30\",\n  \"cantidad_inicial\": 3,\n  \"stock_minimo\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Entrada de mercancía",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"ENTRADA\",\n  \"cantidad\": 10,\n  \"motivo\": \"Pedido a proveedor\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Venta (salida)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"SALIDA\",\n  \"cantidad\": 1,\n  \"motivo\": \"Venta mostrador\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Venta sin stock suficiente (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"SALIDA\",\n  \"cantidad\": 999\n}"
+            }
+          }
+        },
+        {
+          "name": "Ajuste por conteo físico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"AJUSTE\",\n  \"cantidad\": 7,\n  \"motivo\": \"Conteo físico\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Historial de movimientos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Solo ventas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimientos/?tipo=SALIDA",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "SALIDA"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Inventario de una marca",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario/?marca=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ],
+              "query": [
+                {
+                  "key": "marca",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Movimientos de un tenis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/movimientos/?inventario__tenis={{tenis_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ],
+              "query": [
+                {
+                  "key": "inventario__tenis",
+                  "value": "{{tenis_id}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Imágenes",
+      "item": [
+        {
+          "name": "Subir imagen a un tenis",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/imagen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}",
+                "imagen"
+              ]
+            },
+            "description": "Body form-data: en la clave 'imagen' cambia el tipo a File y elige la foto (jpg, png o webp, máx 2 MB).",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "imagen",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear marca con logo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/marcas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "nombre",
+                  "value": "Asics",
+                  "type": "text"
+                },
+                {
+                  "key": "pais_origen",
+                  "value": "Japón",
+                  "type": "text"
+                },
+                {
+                  "key": "logo",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Validaciones (deben fallar con 400)",
+      "item": [
+        {
+          "name": "Oferta mayor al precio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"TEST-01\",\n  \"nombre\": \"Prueba\",\n  \"marca_id\": 1,\n  \"color\": \"Rojo\",\n  \"precio\": \"1000\",\n  \"precio_oferta\": \"1500\"\n}"
+            }
+          }
+        },
+        {
+          "name": "SKU inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"sku con espacios\",\n  \"nombre\": \"Prueba\",\n  \"marca_id\": 1,\n  \"color\": \"Rojo\",\n  \"precio\": \"1000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Tallas repetidas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"TEST-02\",\n  \"nombre\": \"Prueba\",\n  \"marca_id\": 1,\n  \"color\": \"Rojo\",\n  \"precio\": \"1000\",\n  \"inventario\": [\n    {\n      \"talla\": \"26\",\n      \"cantidad\": 1\n    },\n    {\n      \"talla\": \"26\",\n      \"cantidad\": 2\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Talla 26.3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenis\": 1,\n  \"talla\": \"26.3\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Ajuste sin motivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"AJUSTE\",\n  \"cantidad\": 5\n}"
+            }
+          }
+        },
+        {
+          "name": "Registro con contraseña débil",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"x\",\n  \"email\": \"x@x.com\",\n  \"password\": \"123\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Nombre muy corto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"TEST-01\",\n  \"nombre\": \"ab\",\n  \"marca_id\": 1,\n  \"color\": \"Rojo\",\n  \"precio\": \"1999\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Precio mayor a 50,000",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"TEST-01\",\n  \"nombre\": \"Modelo prueba\",\n  \"marca_id\": 1,\n  \"color\": \"Rojo\",\n  \"precio\": \"60000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar inventario desde el tenis",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}"
+              ]
+            },
+            "description": "El inventario solo cambia con /api/movimientos/.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": [\n    {\n      \"talla\": 26,\n      \"cantidad\": 100\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Talla repetida en inventario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenis\": 1,\n  \"talla\": 25,\n  \"cantidad_inicial\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Entrada con cantidad 0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/movimientos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventario\": 1,\n  \"tipo\": \"ENTRADA\",\n  \"cantidad\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Marca repetida (mayúsculas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/marcas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"NIKE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Borrar marca con tenis",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/marcas/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "marcas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Borrar tenis con ventas",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tenis/{{tenis_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tenis",
+                "{{tenis_id}}"
+              ]
+            },
+            "description": "Responde 400 y pide descontinuarlo con la acción estado."
+          }
+        },
+        {
+          "name": "Registro con email repetido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"otro\",\n  \"email\": \"ADMIN@tenis.local\",\n  \"password\": \"Segura12345\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
